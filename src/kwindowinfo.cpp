@@ -33,6 +33,9 @@ KWindowInfoPrivatePidExtension::~KWindowInfoPrivatePidExtension() = default;
 KWindowInfoPrivateAppMenuExtension::KWindowInfoPrivateAppMenuExtension() = default;
 KWindowInfoPrivateAppMenuExtension::~KWindowInfoPrivateAppMenuExtension() = default;
 
+KWindowInfoPrivateGeometryExtension::KWindowInfoPrivateGeometryExtension() = default;
+KWindowInfoPrivateGeometryExtension::~KWindowInfoPrivateGeometryExtension() = default;
+
 class Q_DECL_HIDDEN KWindowInfoPrivate::Private
 {
 public:
@@ -44,6 +47,7 @@ public:
     KWindowInfoPrivateGtkApplicationIdExtension *gtkApplicationIdExtension;
     KWindowInfoPrivatePidExtension *pidExtension;
     KWindowInfoPrivateAppMenuExtension *appMenuExtension;
+    KWindowInfoPrivateGeometryExtension *geometryExtension;
 };
 
 KWindowInfoPrivate::Private::Private(WId window, NET::Properties properties, NET::Properties2 properties2)
@@ -54,6 +58,7 @@ KWindowInfoPrivate::Private::Private(WId window, NET::Properties properties, NET
     , gtkApplicationIdExtension(nullptr)
     , pidExtension(nullptr)
     , appMenuExtension(nullptr)
+    , geometryExtension(nullptr)
 {
 }
 
@@ -109,6 +114,16 @@ KWindowInfoPrivateAppMenuExtension *KWindowInfoPrivate::appMenuExtension() const
 void KWindowInfoPrivate::installAppMenuExtension(KWindowInfoPrivateAppMenuExtension *extension)
 {
     d->appMenuExtension = extension;
+}
+
+KWindowInfoPrivateGeometryExtension *KWindowInfoPrivate::geometryExtension() const
+{
+    return d->geometryExtension;
+}
+
+void KWindowInfoPrivate::installGeometryExtension(KWindowInfoPrivateGeometryExtension *extension)
+{
+    d->geometryExtension = extension;
 }
 
 KWindowInfoPrivateDummy::KWindowInfoPrivateDummy(WId window, NET::Properties properties, NET::Properties2 properties2)
@@ -455,6 +470,41 @@ int KWindowInfo::pid() const
         return extension->pid();
     }
     return 0;
+}
+
+void KWindowInfo::requestMoveResize(NET::Direction direction) const
+{
+    if (auto extension = d->geometryExtension()) {
+        extension->requestMoveResize(direction);
+    }
+}
+
+void KWindowInfo::setGeometry(const QRect &rect) const
+{
+    if (auto extension = d->geometryExtension()) {
+        extension->setGeometry(rect);
+    }
+}
+
+void KWindowInfo::setGeometry(int x, int y, int w, int h) const
+{
+   setGeometry(QRect(x, y, w, h));
+}
+
+void KWindowInfo::setPosition(const QPoint &position) const
+{
+    QRect &&rect = geometry();
+
+    rect.moveTo(position);
+    setGeometry(rect);
+}
+
+void KWindowInfo::setPosition(int x, int y) const
+{
+    QRect &&rect = geometry();
+
+    rect.moveTo(x, y);
+    setGeometry(rect);
 }
 
 #undef DELEGATE

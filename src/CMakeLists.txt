@@ -14,6 +14,7 @@ target_sources(KF5WindowSystem PRIVATE
     kwindowinfo.cpp
     kwindowshadow.cpp
     kwindowsystem.cpp
+    platforms/wayland/kwindowsystem.cpp
     pluginwrapper.cpp
     kwindowsystemplugininterface.cpp
     )
@@ -129,6 +130,9 @@ ecm_generate_export_header(KF5WindowSystem
 
 target_include_directories(KF5WindowSystem INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KWindowSystem>")
 
+target_link_libraries(KF5WindowSystem
+    PUBLIC Qt${QT_MAJOR_VERSION}::DBus
+)
 target_link_libraries(KF5WindowSystem
     PUBLIC Qt${QT_MAJOR_VERSION}::Gui
 )

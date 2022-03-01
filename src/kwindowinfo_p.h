@@ -21,6 +21,7 @@ class KWindowInfoPrivateDesktopFileNameExtension;
 class KWindowInfoPrivateGtkApplicationIdExtension;
 class KWindowInfoPrivatePidExtension;
 class KWindowInfoPrivateAppMenuExtension;
+class KWindowInfoPrivateGeometryExtension;
 
 class KWINDOWSYSTEM_EXPORT KWindowInfoPrivate : public QSharedData
 {
@@ -59,6 +60,7 @@ public:
     KWindowInfoPrivateGtkApplicationIdExtension *gtkApplicationIdExtension() const;
     KWindowInfoPrivatePidExtension *pidExtension() const;
     KWindowInfoPrivateAppMenuExtension *appMenuExtension() const;
+    KWindowInfoPrivateGeometryExtension *geometryExtension() const;
 
     static KWindowInfoPrivate *create(WId window, NET::Properties properties, NET::Properties2 properties2);
 
@@ -69,8 +71,10 @@ protected:
     void installGtkApplicationIdExtension(KWindowInfoPrivateGtkApplicationIdExtension *extension);
     void installPidExtension(KWindowInfoPrivatePidExtension *extension);
     void installAppMenuExtension(KWindowInfoPrivateAppMenuExtension *extension);
+    void installGeometryExtension(KWindowInfoPrivateGeometryExtension *extension);
 
 private:
+    friend class KWindowInfoPrivateWayland;
     class Private;
     const QScopedPointer<Private> d;
 };
@@ -118,6 +122,18 @@ public:
 
 protected:
     explicit KWindowInfoPrivateAppMenuExtension();
+};
+
+class KWINDOWSYSTEM_EXPORT KWindowInfoPrivateGeometryExtension
+{
+public:
+    virtual ~KWindowInfoPrivateGeometryExtension();
+
+    virtual void requestMoveResize(NET::Direction) const = 0;
+    virtual void setGeometry(const QRect &) const = 0;
+
+protected:
+    explicit KWindowInfoPrivateGeometryExtension();
 };
 
 #endif

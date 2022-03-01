@@ -1,6 +1,7 @@
 if(APPLE)
     add_subdirectory(osx)
 endif()
+add_subdirectory(wayland)
 if(WIN32)
     add_subdirectory(windows)
 endif()

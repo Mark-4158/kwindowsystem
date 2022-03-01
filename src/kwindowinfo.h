@@ -611,6 +611,38 @@ public:
     QByteArray applicationMenuObjectPath() const;
 
     /**
+     * Requests a WMMoveResize of the application's window.
+     *
+     * Requires NET::WMMoveResize passed as properties parameter to the
+     * constructor.
+     *
+     * @since 5.90
+     */
+    void requestMoveResize(NET::Direction) const;
+
+    /**
+     * Sets the geometry of the application's window.
+     *
+     * Requires NET::WM2MoveResizeWindow passed as properties parameter to the
+     * constructor.
+     *
+     * @since 5.90
+     */
+    void setGeometry(const QRect &) const;
+    void setGeometry(int x, int y, int w, int h) const;
+
+    /**
+     * Sets the position of the application's window.
+     *
+     * Requires NET::WMGeometry and NET::WM2MoveResizeWindow passed as
+     * properties parameter to the constructor.
+     *
+     * @since 5.90
+     */
+    void setPosition(const QPoint &position) const;
+    void setPosition(int x, int y) const;
+
+    /**
      * Copy constructor.
      */
     KWindowInfo(const KWindowInfo &);
